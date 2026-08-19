@@ -13,4 +13,7 @@ __pycache__/
 venv/
 
 # VS Code
-.vscode/
+.vscode/.env
+
+# Environment variables
+.env

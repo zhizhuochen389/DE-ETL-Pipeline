@@ -1,33 +1,42 @@
-import sqlite3
+import psycopg2
 import os
+from dotenv import load_dotenv
 
-db_file = "data/users.db"
+load_dotenv()
 
 print("===== Starting Data Validation =====")
 
-# 1. Check database exists
-if not os.path.exists(db_file):
-    raise FileNotFoundError("Database file does not exist!")
+# 1. Connect to PostgreSQL
+connection = psycopg2.connect(
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT"),
+    database=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD")
+)
 
-print("✓ Database exists")
-
-# 2. Connect to database
-connection = sqlite3.connect(db_file)
 cursor = connection.cursor()
 
-# 3. Check users table exists
+print("✓ Database connection successful")
+
+# 2. Check users table exists
 cursor.execute("""
-SELECT name
-FROM sqlite_master
-WHERE type='table' AND name='users';
+SELECT EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
+      AND table_name = 'users'
+);
 """)
 
-if cursor.fetchone() is None:
+table_exists = cursor.fetchone()[0]
+
+if not table_exists:
     raise Exception("users table does not exist!")
 
 print("✓ users table exists")
 
-# 4. Check number of records
+# 3. Check number of records
 cursor.execute("SELECT COUNT(*) FROM users;")
 count = cursor.fetchone()[0]
 
@@ -36,7 +45,7 @@ print(f"✓ Total records: {count}")
 if count == 0:
     raise Exception("users table is empty!")
 
-# 5. Check important fields for NULL values
+# 4. Check important fields for NULL values
 cursor.execute("""
 SELECT COUNT(*)
 FROM users

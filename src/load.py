@@ -1,10 +1,20 @@
 import csv
-import sqlite3
+import psycopg2
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 csv_file = "data/processed/users_cleaned.csv"
-db_file = "data/users.db"
 
-connection = sqlite3.connect(db_file)
+connection = psycopg2.connect(
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT"),
+    database=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD")
+)
+
 cursor = connection.cursor()
 
 cursor.execute("""
@@ -26,18 +36,27 @@ with open(csv_file, "r", encoding="utf-8") as file:
 
     for row in reader:
         cursor.execute("""
-        INSERT OR REPLACE INTO users (
-            id,
-            name,
-            username,
-            email,
-            phone,
-            website,
-            city,
-            zipcode,
-            company
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO users (
+                id,
+                name,
+                username,
+                email,
+                phone,
+                website,
+                city,
+                zipcode,
+                company
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO UPDATE SET
+                name = EXCLUDED.name,
+                username = EXCLUDED.username,
+                email = EXCLUDED.email,
+                phone = EXCLUDED.phone,
+                website = EXCLUDED.website,
+                city = EXCLUDED.city,
+                zipcode = EXCLUDED.zipcode,
+                company = EXCLUDED.company
         """, (
             row["id"],
             row["name"],
@@ -53,4 +72,4 @@ with open(csv_file, "r", encoding="utf-8") as file:
 connection.commit()
 connection.close()
 
-print("Data loaded into SQLite database:", db_file)
+print("Data loaded into PostgreSQL database: sql_practice")
