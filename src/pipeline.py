@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import logging
+from src.load import load_users
 
 
 # Configure logging
@@ -45,10 +46,7 @@ try:
     print("\n3. Running Load...")
     logging.info("Load started")
 
-    subprocess.run(
-        [sys.executable, "src/load.py"],
-        check=True
-    )
+    load_users()
 
     logging.info("Load completed successfully")
 
