@@ -18,5 +18,6 @@ def test_load_users_connects_to_database(mock_connect):
 
     mock_connect.assert_called_once()
     mock_connection.cursor.assert_called_once()
+    assert mock_cursor.execute.called
     mock_connection.commit.assert_called_once()
     mock_connection.close.assert_called_once()
