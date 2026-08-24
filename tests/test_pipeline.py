@@ -38,5 +38,5 @@ def test_run_pipeline(
 
     mock_extract.assert_called_once_with()
     mock_transform.assert_called_once_with(raw_data)
-    mock_load.assert_called_once_with(transformed_data)
+    mock_load.assert_called_once_with()
     mock_subprocess.assert_called_once()

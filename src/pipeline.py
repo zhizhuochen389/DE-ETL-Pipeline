@@ -41,7 +41,7 @@ def run_pipeline():
         print("\n3. Running Load...")
         logging.info("Load started")
 
-        load_users(transformed_data)
+        load_users()
 
         logging.info("Load completed successfully")
 
