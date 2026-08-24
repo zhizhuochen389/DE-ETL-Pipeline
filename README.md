@@ -32,8 +32,11 @@ The pipeline follows four main stages:
 
 ## Project Structure
 
-```text
 DE_Project_1/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 │
 ├── data/
 │   ├── raw/
@@ -52,13 +55,17 @@ DE_Project_1/
 │   ├── validate.py
 │   └── pipeline.py
 │
+├── tests/
+│   ├── test_extract.py
+│   ├── test_load.py
+│   └── test_pipeline.py
+│
 ├── .env
 ├── .env.example
 ├── .gitignore
+├── pytest.ini
 ├── README.md
-├── requirements.txt
-└── test.py
-```
+└── requirements.txt
 
 ## Technologies Used
 
